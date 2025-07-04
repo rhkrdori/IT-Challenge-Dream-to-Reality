@@ -38,11 +38,6 @@ React Native + Expo 기반으로 제작된 프론트엔드 앱 프로젝트입�
 
 1. 레포지토리 클론
 
-```bash
-git clone https://github.com/your-username/thunder-app.git
-cd thunder-app
-```
-
 2. 패키지 설치
 
 ```bash
@@ -57,11 +52,13 @@ npx expo start
 ```
 
 4. QR코드를 통해 **Expo Go** 앱으로 실행하거나  
-웹 시뮬레이터에서 바로 확인 가능!
+   웹 시뮬레이터에서 바로 확인 가능!
 
 ---
 
 ## 🧪 기능 요약
+
+25/07/04 기준
 
 - 시험 일정 등록/생성
 - 캘린더 기반 UI
@@ -73,14 +70,12 @@ npx expo start
 
 ## ✅ 작업자
 
-- **헴** – React Native 개발자 충성충성🔥
+- **추가해야해용**
 
 ---
 
 ## ⚠️ 주의사항
 
-- `node_modules`는 Git에 올라가지 않습니다!
-- `.env`, 개인 정보 등은 `.gitignore`로 관리하세요!
 - Expo SDK 버전은 `package.json`에 명시되어 있습니다.
 
 ---
