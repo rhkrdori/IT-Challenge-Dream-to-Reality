@@ -9,11 +9,6 @@ React Native + Expo 기반으로 제작된 프론트엔드 앱 프로젝트입�
 ## 🛠 기술 스택
 
 - **React Native**
-- **Expo**
-- **React Navigation**
-- **react-native-calendars**
-- **expo-checkbox**
-- **expo-router**
 
 ---
 
