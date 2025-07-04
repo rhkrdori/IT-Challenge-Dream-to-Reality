@@ -1,50 +1,92 @@
-# Welcome to your Expo app 👋
+# ⚡️ 벼락수룡
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+수룡이가 벼락치기를 도와주는 시험 관리 앱입니다!
 
-## Get started
+React Native + Expo 기반으로 제작된 프론트엔드 앱 프로젝트입니다.
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## 🛠 기술 스택
 
-2. Start the app
+- **React Native**
+- **Expo**
+- **React Navigation**
+- **react-native-calendars**
+- **expo-checkbox**
+- **expo-router**
 
-   ```bash
-   npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+## 📁 프로젝트 구조
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+.
+├── app/            # 페이지 컴포넌트들 (index, login, signup 등)
+├── assets/         # 이미지, 폰트 등 정적 자산
+├── components/     # 재사용 가능한 UI 컴포넌트
+├── constants/      # 상수값 저장
+├── hooks/          # 커스텀 훅
+├── scripts/        # 기타 유틸
+├── node_modules/
+├── package.json
+└── README.md
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+---
 
-## Learn more
+## 🚀 실행 방법
 
-To learn more about developing your project with Expo, look at the following resources:
+1. 레포지토리 클론
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+git clone https://github.com/your-username/thunder-app.git
+cd thunder-app
+```
 
-## Join the community
+2. 패키지 설치
 
-Join our community of developers creating universal apps.
+```bash
+npm install
+# 또는 yarn
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+3. Expo 실행
+
+```bash
+npx expo start
+```
+
+4. QR코드를 통해 **Expo Go** 앱으로 실행하거나  
+웹 시뮬레이터에서 바로 확인 가능!
+
+---
+
+## 🧪 기능 요약
+
+- 시험 일정 등록/생성
+- 캘린더 기반 UI
+- 캐릭터와 함께하는 벼락치기 타이머
+- 로그인 / 회원가입 기능
+- 체크박스 기반 이용약관 확인
+
+---
+
+## ✅ 작업자
+
+- **헴** – React Native 개발자 충성충성🔥
+
+---
+
+## ⚠️ 주의사항
+
+- `node_modules`는 Git에 올라가지 않습니다!
+- `.env`, 개인 정보 등은 `.gitignore`로 관리하세요!
+- Expo SDK 버전은 `package.json`에 명시되어 있습니다.
+
+---
+
+## 📌 To Do
+
+- [ ] Firebase 연동
+- [ ] 사용자 맞춤 푸시 알림
+- [ ] 성적 관리 기능 추가
