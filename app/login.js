@@ -49,7 +49,7 @@ export default function LoginScreen() {
 
       <TouchableOpacity
         style={styles.loginBtn}
-        onPress={() => router.push("/main")}
+        onPress={() => router.push("/question1")}
       >
         <Text style={styles.loginText}>로그인</Text>
       </TouchableOpacity>
