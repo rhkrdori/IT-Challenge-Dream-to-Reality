@@ -1,6 +1,8 @@
 // app/login.js
 
+import Checkbox from "expo-checkbox";
 import { useRouter } from "expo-router";
+import { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -11,6 +13,7 @@ import {
 
 export default function LoginScreen() {
   const router = useRouter();
+  const [autoLogin, setAutoLogin] = useState(false);
 
   return (
     <View style={styles.container}>
@@ -28,11 +31,20 @@ export default function LoginScreen() {
         secureTextEntry
       />
 
-      <View style={styles.row}>
-        <View style={styles.checkboxWrapper}>
-          <Text>☐ 자동로그인</Text>
-        </View>
-        <Text style={styles.findText}>아이디 찾기 | 비밀번호 찾기</Text>
+      <View style={styles.checkboxRow}>
+        <Checkbox
+          value={autoLogin}
+          onValueChange={setAutoLogin}
+          color={autoLogin ? "#B491DD" : undefined}
+        />
+        <TouchableOpacity
+          onPress={() => {
+            setPopupType("terms");
+            setVisible(true);
+          }}
+        >
+          <Text style={[styles.checkboxLabel]}>자동 로그인</Text>
+        </TouchableOpacity>
       </View>
 
       <TouchableOpacity
@@ -86,5 +98,15 @@ const styles = StyleSheet.create({
     color: "#888",
     textAlign: "center",
     marginTop: 20,
+  },
+  checkboxRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+    flexWrap: "wrap",
+  },
+  checkboxLabel: {
+    marginLeft: 8,
+    fontSize: 14,
   },
 });
