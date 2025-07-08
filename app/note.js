@@ -18,4 +18,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
   },
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> 69b0a9b (네비바)
