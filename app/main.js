@@ -260,7 +260,6 @@ export default function HomeScreen() {
               if (tab.name === "노트") router.push("/note");
               else if (tab.name === "퀴즈") router.push("/quiz");
               else if (tab.name === "마이페이지") router.push("/mypage");
-              else router.push("/"); // 홈
             }}
           >
             <View
