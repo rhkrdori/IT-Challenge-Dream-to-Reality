@@ -37,14 +37,7 @@ export default function LoginScreen() {
           onValueChange={setAutoLogin}
           color={autoLogin ? "#B491DD" : undefined}
         />
-        <TouchableOpacity
-          onPress={() => {
-            setPopupType("terms");
-            setVisible(true);
-          }}
-        >
-          <Text style={[styles.checkboxLabel]}>자동 로그인</Text>
-        </TouchableOpacity>
+        <Text style={[styles.checkboxLabel]}>자동 로그인</Text>
       </View>
 
       <TouchableOpacity
