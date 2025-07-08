@@ -5,6 +5,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
+  Animated,
   Image,
   Modal,
   ScrollView,
@@ -17,13 +18,12 @@ import { Calendar } from "react-native-calendars";
 
 export default function HomeScreen() {
   const router = useRouter();
-
   const [activeTab, setActiveTab] = useState("홈");
-
   const [date, setDate] = useState(new Date());
   const [calendarVisible, setCalendarVisible] = useState(false);
-  const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
-  const [showFullSchedule, setShowFullSchedule] = useState(false);
+  const [sheetHeight] = useState(new Animated.Value(380));
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const tabs = [
     { name: "홈", label: "홈" },
@@ -31,7 +31,7 @@ export default function HomeScreen() {
     { name: "퀴즈", label: "퀴즈" },
     { name: "마이페이지", label: "마이페이지" },
   ];
-  const [modalVisible, setModalVisible] = useState(false); // BottomSheet 대신 Modal
+
   const [plans, setPlans] = useState([
     {
       id: 1,
@@ -52,8 +52,6 @@ export default function HomeScreen() {
     },
   ]);
 
-  const goToPrevDate = () => setDate(subDays(date, 1));
-  const goToNextDate = () => setDate(addDays(date, 1));
   const toggleExpand = (id) => {
     setPlans((prev) =>
       prev.map((plan) =>
@@ -62,194 +60,131 @@ export default function HomeScreen() {
     );
   };
 
-  const ScheduleList = ({ plans, toggleExpand }) => {
-    return (
-      <View>
-        <Text style={styles.toDoTitle}>오늘의 계획</Text>
-        {plans.map((plan) => (
-          <View key={plan.id}>
-            {/* 상위 plan */}
-            <View style={styles.planItem}>
-              <Text style={styles.planText}>{plan.title}</Text>
-              <TouchableOpacity onPress={() => toggleExpand(plan.id)}>
-                <Ionicons
-                  name={plan.isExpanded ? "chevron-back" : "chevron-down"}
-                  size={16}
-                  color="#555"
-                />
-              </TouchableOpacity>
-              <Ionicons
-                name="ellipsis-vertical"
-                size={16}
-                color="#555"
-                style={{ marginLeft: 8 }}
-              />
-            </View>
-
-            {/* 하위 todo */}
-            {plan.isExpanded && (
-              <View style={styles.subTodoContainer}>
-                {plan.todos.map((todo) => (
-                  <View key={todo.id} style={styles.subTodoItem}>
-                    <Checkbox value={todo.checked} />
-                    <Text style={styles.subTodoText}>{todo.title}</Text>
-                  </View>
-                ))}
-              </View>
-            )}
-          </View>
-        ))}
-      </View>
-    );
+  const toggleSheet = () => {
+    const toValue = isExpanded ? 380 : 800;
+    Animated.timing(sheetHeight, {
+      toValue,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+    setIsExpanded(!isExpanded);
   };
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={styles.container}>
-          <LinearGradient
-            colors={["#F4EDFF", "#FFFFFF"]}
-            style={styles.gradient}
-          >
-            <View style={styles.contentWrapper}>
-              {/* 상단 제목 */}
-              <Text style={styles.title}>
-                {"\n"} 다가오는 시험을 등록해보세요!
-              </Text>
-
-              {/* 상단 버튼 2개 */}
-              <View style={styles.topButtons}>
-                <TouchableOpacity
-                  style={styles.actionButton}
-                  onPress={() => setModalVisible(true)}
-                >
-                  <Text style={styles.buttonText}>일정 불러오기</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton}>
-                  <Text style={styles.buttonText}>새로운 일정 생성</Text>
-                </TouchableOpacity>
-              </View>
-
-              {/* 타이머 + 캐릭터 나란히 배치 */}
-              <View style={styles.rowContainer}>
-                <TouchableOpacity style={styles.timerButton}>
-                  <Ionicons name="time-outline" size={30} color="#B491DD" />
-                  <Text style={styles.timerText}>Timer</Text>
-                </TouchableOpacity>
-
-                <Image
-                  source={require("../assets/images/main.png")}
-                  style={styles.character}
-                  resizeMode="contain"
-                />
-              </View>
-            </View>
-          </LinearGradient>
-
-          {/*todo*/}
-          <View style={styles.scheduleBox}>
-            <TouchableOpacity onPress={() => setShowFullSchedule(true)}>
-              <View style={styles.handleBar} />
-            </TouchableOpacity>
-
-            {/* 일정 */}
-            <View style={styles.header}>
-              <TouchableOpacity onPress={goToPrevDate}>
-                <Ionicons name="chevron-back" size={20} />
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={() => setCalendarVisible(true)}>
-                <Text style={styles.dateText}>
-                  {format(date, "yyyy년 M월 d일")}
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={goToNextDate}>
-                <Ionicons name="chevron-forward" size={20} />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.card}>
-              <Text style={styles.toDoTitle}>오늘의 계획</Text>
-              {plans.map((plan) => (
-                <View key={plan.id}>
-                  {/* ▣ 상위 plan 줄 */}
-                  <View style={styles.planItem}>
-                    <Text style={styles.planText}>{plan.title}</Text>
-                    <TouchableOpacity onPress={() => toggleExpand(plan.id)}>
-                      <Ionicons
-                        name={plan.isExpanded ? "chevron-back" : "chevron-down"} // ◀ or ▼
-                        size={16}
-                        color="#555"
-                      />
-                    </TouchableOpacity>
-                    <Ionicons
-                      name="ellipsis-vertical"
-                      size={16}
-                      color="#555"
-                      style={{ marginLeft: 8 }}
-                    />
-                  </View>
-
-                  {/* ▣ 하위 todo들 */}
-                  {plan.isExpanded && (
-                    <View style={styles.subTodoContainer}>
-                      {plan.todos.map((todo) => (
-                        <View key={todo.id} style={styles.subTodoItem}>
-                          <Checkbox value={todo.checked} />
-                          <Text style={styles.subTodoText}>{todo.title}</Text>
-                        </View>
-                      ))}
-                    </View>
-                  )}
-                </View>
-              ))}
-
-              <TouchableOpacity style={styles.addButton}>
-                <Text style={styles.addButtonText}>+ 과목</Text>
-              </TouchableOpacity>
-
-              {/*일정 모달*/}
-
-              {/* 달력 모달 */}
-              <Modal
-                visible={calendarVisible}
-                transparent
-                animationType="slide"
+      <ScrollView contentContainerStyle={styles.container}>
+        <LinearGradient colors={["#F4EDFF", "#FFFFFF"]} style={styles.gradient}>
+          <View style={styles.contentWrapper}>
+            <Text style={styles.title}>
+              {"\n"} 다가오는 시험을 등록해보세요!
+            </Text>
+            <View style={styles.topButtons}>
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => setModalVisible(true)}
               >
-                <View style={styles.modalBackground}>
-                  <View style={styles.calendarContainer}>
-                    <Calendar
-                      onDayPress={(day) => {
-                        setDate(new Date(day.dateString));
-                        setCalendarVisible(false);
-                      }}
-                      markedDates={{
-                        [format(date, "yyyy-MM-dd")]: {
-                          selected: true,
-                          selectedColor: "#B491DD",
-                        },
-                      }}
-                    />
-                    <TouchableOpacity onPress={() => setCalendarVisible(false)}>
-                      <Text
-                        style={{
-                          marginTop: 10,
-                          color: "#B491DD",
-                          textAlign: "center",
-                        }}
-                      >
-                        닫기
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </Modal>
+                <Text style={styles.buttonText}>일정 불러오기</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.actionButton}>
+                <Text style={styles.buttonText}>새로운 일정 생성</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.rowContainer}>
+              <TouchableOpacity style={styles.timerButton}>
+                <Ionicons name="time-outline" size={30} color="#B491DD" />
+                <Text style={styles.timerText}>Timer</Text>
+              </TouchableOpacity>
+              <Image
+                source={require("../assets/images/main.png")}
+                style={styles.character}
+                resizeMode="contain"
+              />
             </View>
           </View>
-        </ScrollView>
-      </View>
+        </LinearGradient>
+      </ScrollView>
 
-      {/* 하단 네비게이션 */}
+      <Animated.View style={[styles.sheet, { height: sheetHeight }]}>
+        <TouchableOpacity onPress={toggleSheet}>
+          <View style={styles.handleBar} />
+        </TouchableOpacity>
+
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => setDate(subDays(date, 1))}>
+            <Ionicons name="chevron-back" size={20} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setCalendarVisible(true)}>
+            <Text style={styles.dateText}>
+              {format(date, "yyyy년 M월 d일")}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setDate(addDays(date, 1))}>
+            <Ionicons name="chevron-forward" size={20} />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.toDoTitle}>오늘의 계획</Text>
+          {plans.map((plan) => (
+            <View key={plan.id}>
+              <View style={styles.planItem}>
+                <Text style={styles.planText}>{plan.title}</Text>
+                <TouchableOpacity onPress={() => toggleExpand(plan.id)}>
+                  <Ionicons
+                    name={plan.isExpanded ? "chevron-back" : "chevron-down"}
+                    size={16}
+                    color="#555"
+                  />
+                </TouchableOpacity>
+              </View>
+              {plan.isExpanded && (
+                <View style={styles.subTodoContainer}>
+                  {plan.todos.map((todo) => (
+                    <View key={todo.id} style={styles.subTodoItem}>
+                      <Checkbox value={todo.checked} />
+                      <Text style={styles.subTodoText}>{todo.title}</Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+            </View>
+          ))}
+          <TouchableOpacity style={styles.addButton}>
+            <Text style={styles.addButtonText}>+ 과목</Text>
+          </TouchableOpacity>
+        </View>
+
+        <Modal visible={calendarVisible} transparent animationType="slide">
+          <View style={styles.modalBackground}>
+            <View style={styles.calendarContainer}>
+              <Calendar
+                onDayPress={(day) => {
+                  setDate(new Date(day.dateString));
+                  setCalendarVisible(false);
+                }}
+                markedDates={{
+                  [format(date, "yyyy-MM-dd")]: {
+                    selected: true,
+                    selectedColor: "#B491DD",
+                  },
+                }}
+              />
+              <TouchableOpacity onPress={() => setCalendarVisible(false)}>
+                <Text
+                  style={{
+                    marginTop: 10,
+                    color: "#B491DD",
+                    textAlign: "center",
+                  }}
+                >
+                  닫기
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </Animated.View>
+
       <View style={styles.bottomNav}>
         {tabs.map((tab, index) => (
           <TouchableOpacity
@@ -338,76 +273,47 @@ const styles = StyleSheet.create({
     color: "#B491DD",
     fontWeight: "500",
   },
-  calendar: {
-    width: "100%",
-    borderRadius: 15,
-    padding: 10,
-    backgroundColor: "#fff",
-    marginBottom: 20,
-  },
-  bottomNav: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    height: 100,
-    backgroundColor: "#fff",
-    borderTopWidth: 1,
-    borderColor: "#eee",
-    paddingBottom: 30,
-  },
-  dot: {
-    width: 12,
-    height: 12,
-    borderRadius: 4,
-    marginBottom: 8,
-  },
-  dotActive: {
-    backgroundColor: "#222",
-  },
-  dotInactive: {
-    backgroundColor: "#ccc",
-  },
-  navText: {
-    fontSize: 12,
-  },
-  navItem: {
-    alignItems: "center",
-    justifyContent: "center",
-    flex: 1,
-  },
-  navTextInactive: {
-    color: "#ccc",
-  },
-  navTextActive: {
-    color: "#000",
-    fontWeight: "bold",
-  },
-  modalBackground: {
-    flex: 1,
-    justifyContent: "flex-end",
-    backgroundColor: "rgba(0,0,0,0)",
-  },
-  sheetContent: {
-    backgroundColor: "white",
-    padding: 20,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-  },
   gradient: {
-    width: "100%", // 전체 너비
-    // padding 제거함!!
+    width: "100%",
   },
-
   contentWrapper: {
     paddingHorizontal: 20,
     paddingTop: 30,
   },
-
+  sheet: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "#f4edff",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 16,
+  },
+  handleBar: {
+    width: 40,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: "#D0D4DB",
+    marginBottom: 12,
+    alignSelf: "center",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
+    marginBottom: 10,
+  },
+  dateText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#6c4ed5",
+  },
   card: {
     backgroundColor: "#f5f0ff",
     borderRadius: 20,
     padding: 16,
-    width: "90%",
-    alignSelf: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -434,6 +340,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     flex: 1,
   },
+  subTodoContainer: {
+    marginLeft: 32,
+    marginTop: 4,
+  },
+  subTodoItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  subTodoText: {
+    marginLeft: 8,
+    fontSize: 14,
+    color: "#333",
+  },
   addButton: {
     alignSelf: "flex-start",
     marginTop: 10,
@@ -445,18 +365,6 @@ const styles = StyleSheet.create({
   addButtonText: {
     color: "#6c4ed5",
     fontWeight: "bold",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 10,
-    marginBottom: 10,
-  },
-  dateText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#6c4ed5",
   },
   modalBackground: {
     flex: 1,
@@ -471,43 +379,40 @@ const styles = StyleSheet.create({
     width: "90%",
     alignItems: "center",
   },
-  subTodoContainer: {
-    marginLeft: 32, // 들여쓰기
-    marginTop: 4,
-  },
-
-  subTodoItem: {
+  bottomNav: {
     flexDirection: "row",
+    justifyContent: "space-around",
+    height: 100,
+    backgroundColor: "#fff",
+    borderTopWidth: 1,
+    borderColor: "#eee",
+    paddingBottom: 30,
+  },
+  navItem: {
     alignItems: "center",
-    marginBottom: 10,
+    justifyContent: "center",
+    flex: 1,
   },
-
-  subTodoText: {
-    marginLeft: 8,
-    fontSize: 14,
-    color: "#333",
+  navText: {
+    fontSize: 12,
   },
-  scheduleBox: {
-    backgroundColor: "#f4edff",
-    borderRadius: 20,
-    padding: 16,
-    //marginVertical: 20,
-    marginHorizontal: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 5,
-    width: "100%",
-    marginBottom: 0,
-    flexGrow: 1,
+  navTextInactive: {
+    color: "#ccc",
   },
-  handleBar: {
-    width: 40,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: "#D0D4DB",
-    marginBottom: 12,
-    alignSelf: "center",
+  navTextActive: {
+    color: "#000",
+    fontWeight: "bold",
+  },
+  dot: {
+    width: 12,
+    height: 12,
+    borderRadius: 4,
+    marginBottom: 8,
+  },
+  dotActive: {
+    backgroundColor: "#222",
+  },
+  dotInactive: {
+    backgroundColor: "#ccc",
   },
 });
