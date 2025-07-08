@@ -23,6 +23,7 @@ export default function HomeScreen() {
   const [date, setDate] = useState(new Date());
   const [calendarVisible, setCalendarVisible] = useState(false);
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
+  const [showFullSchedule, setShowFullSchedule] = useState(false);
 
   const tabs = [
     { name: "홈", label: "홈" },
@@ -58,6 +59,47 @@ export default function HomeScreen() {
       prev.map((plan) =>
         plan.id === id ? { ...plan, isExpanded: !plan.isExpanded } : plan
       )
+    );
+  };
+
+  const ScheduleList = ({ plans, toggleExpand }) => {
+    return (
+      <View>
+        <Text style={styles.toDoTitle}>오늘의 계획</Text>
+        {plans.map((plan) => (
+          <View key={plan.id}>
+            {/* 상위 plan */}
+            <View style={styles.planItem}>
+              <Text style={styles.planText}>{plan.title}</Text>
+              <TouchableOpacity onPress={() => toggleExpand(plan.id)}>
+                <Ionicons
+                  name={plan.isExpanded ? "chevron-back" : "chevron-down"}
+                  size={16}
+                  color="#555"
+                />
+              </TouchableOpacity>
+              <Ionicons
+                name="ellipsis-vertical"
+                size={16}
+                color="#555"
+                style={{ marginLeft: 8 }}
+              />
+            </View>
+
+            {/* 하위 todo */}
+            {plan.isExpanded && (
+              <View style={styles.subTodoContainer}>
+                {plan.todos.map((todo) => (
+                  <View key={todo.id} style={styles.subTodoItem}>
+                    <Checkbox value={todo.checked} />
+                    <Text style={styles.subTodoText}>{todo.title}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
+          </View>
+        ))}
+      </View>
     );
   };
 
@@ -106,7 +148,7 @@ export default function HomeScreen() {
 
           {/*todo*/}
           <View style={styles.scheduleBox}>
-            <TouchableOpacity onPress={() => setBottomSheetVisible(true)}>
+            <TouchableOpacity onPress={() => setShowFullSchedule(true)}>
               <View style={styles.handleBar} />
             </TouchableOpacity>
 
@@ -132,9 +174,7 @@ export default function HomeScreen() {
                 <View key={plan.id}>
                   {/* ▣ 상위 plan 줄 */}
                   <View style={styles.planItem}>
-                    <Checkbox value={plan.checked} />
                     <Text style={styles.planText}>{plan.title}</Text>
-
                     <TouchableOpacity onPress={() => toggleExpand(plan.id)}>
                       <Ionicons
                         name={plan.isExpanded ? "chevron-back" : "chevron-down"} // ◀ or ▼
@@ -142,7 +182,6 @@ export default function HomeScreen() {
                         color="#555"
                       />
                     </TouchableOpacity>
-
                     <Ionicons
                       name="ellipsis-vertical"
                       size={16}
@@ -164,6 +203,12 @@ export default function HomeScreen() {
                   )}
                 </View>
               ))}
+
+              <TouchableOpacity style={styles.addButton}>
+                <Text style={styles.addButtonText}>+ 과목</Text>
+              </TouchableOpacity>
+
+              {/*일정 모달*/}
 
               {/* 달력 모달 */}
               <Modal
@@ -199,10 +244,6 @@ export default function HomeScreen() {
                   </View>
                 </View>
               </Modal>
-
-              <TouchableOpacity style={styles.addButton}>
-                <Text style={styles.addButtonText}>+ 과목</Text>
-              </TouchableOpacity>
             </View>
           </View>
         </ScrollView>
@@ -249,6 +290,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
     alignItems: "center",
+    flex: 1,
   },
   title: {
     fontSize: 25,
@@ -458,6 +500,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     width: "100%",
+    marginBottom: 0,
+    flexGrow: 1,
   },
   handleBar: {
     width: 40,
