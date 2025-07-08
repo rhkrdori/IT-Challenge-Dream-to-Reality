@@ -17,7 +17,10 @@ import { Calendar } from "react-native-calendars";
 
 export default function HomeScreen() {
   const router = useRouter();
+<<<<<<< HEAD
 
+=======
+>>>>>>> 69b0a9b (네비바)
   const [activeTab, setActiveTab] = useState("홈");
 
   const [date, setDate] = useState(new Date());
@@ -32,6 +35,7 @@ export default function HomeScreen() {
     { name: "마이페이지", label: "마이페이지" },
   ];
   const [modalVisible, setModalVisible] = useState(false); // BottomSheet 대신 Modal
+<<<<<<< HEAD
   const [plans, setPlans] = useState([
     {
       id: 1,
@@ -60,6 +64,26 @@ export default function HomeScreen() {
         plan.id === id ? { ...plan, isExpanded: !plan.isExpanded } : plan
       )
     );
+=======
+  
+  const handleTabPress = (tabName) => {
+    if (activeTab === tabName) {
+      // 이미 활성 탭이면 아무 동작 안 함
+      return;
+    }
+    
+    setActiveTab(tabName);
+
+    if (tabName === "홈") {
+      router.push("/main");
+    } else if (tabName === "노트") {
+      router.push("/note");
+    } else if (tabName === "퀴즈") {
+      router.push("/quiz");
+    } else if (tabName === "마이페이지") {
+      router.push("/mypage");
+    }
+>>>>>>> 69b0a9b (네비바)
   };
 
   const ScheduleList = ({ plans, toggleExpand }) => {
@@ -258,8 +282,13 @@ export default function HomeScreen() {
             onPress={() => {
               setActiveTab(tab.name);
               if (tab.name === "노트") router.push("/note");
+<<<<<<< HEAD
               //else if (tab.name === "퀴즈") router.push("/quiz");
               //else if (tab.name === "마이페이지") router.push("/mypage");
+=======
+              else if (tab.name === "퀴즈") router.push("/quiz");
+              else if (tab.name === "마이페이지") router.push("/mypage");
+>>>>>>> 69b0a9b (네비바)
               else router.push("/"); // 홈
             }}
           >
